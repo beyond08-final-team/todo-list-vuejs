@@ -1,7 +1,7 @@
 <template>
   <div class="background">
     <div class="main-box">
-      <h1>To Do App</h1>
+      <h1>To Do List</h1>
       <div class="input-container">
         <input type="text" placeholder="Enter a task here" />
         <button class="save-button">SAVE</button>
@@ -63,18 +63,17 @@ input[type="text"] {
 button {
   padding: 10px 20px;
   margin-right: 5px;
-  cursor: pointer;
   border: none;
   border-radius: 5px;
   color: white;
 }
 
-/* 저장 버튼 색상 스타일 */
+/* SAVE 버튼 색상 스타일 */
 .save-button {
   background-color: #4a5bdc;
 }
 
-/* 작업 불러오기 버튼 색상 스타일 */
+/* GET TASKs 버튼 색상 스타일 */
 .get-tasks-button {
   background-color: #d5a253;
 }
