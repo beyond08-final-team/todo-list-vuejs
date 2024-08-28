@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@apis:/*": ["./src/apis/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@plugins/*": ["./src/plugins/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@store/*": ["./src/store/*"],
+      "@util/*": ["./src/util/*"],
+      "@views/*": ["./src/views/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
