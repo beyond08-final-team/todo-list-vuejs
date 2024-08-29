@@ -1,9 +1,20 @@
 <template>
-  <b-button>hello</b-button>
+  <div id="app">
+    <ToDoApp />
+  </div>
 </template>
 
 <script>
-export default {};
+import ToDoApp from './components/ToDoApp.vue';
+
+export default {
+  name: 'App',
+  components: {
+    ToDoApp,
+  }
+};
 </script>
 
-<style lang="scss" scoped></style>
+<style>
+
+</style>
