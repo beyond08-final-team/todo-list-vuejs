@@ -10,11 +10,16 @@ import ToDoApp from './components/ToDoApp.vue';
 export default {
   name: 'App',
   components: {
-    ToDoApp,
+    ToDoApp
   }
 };
 </script>
 
 <style>
-
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 </style>
