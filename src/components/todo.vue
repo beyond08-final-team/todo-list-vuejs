@@ -22,6 +22,7 @@
           </div>
         </div>
         <table>
+          <!-- 테이블 생성 -->
           <thead>
             <tr>
               <th>No</th>
