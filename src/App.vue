@@ -1,6 +1,5 @@
 <template>
-  <div id="app">
-    <h1>To Do App</h1>
+  <div id="app" class="app-container">
     <todo-list />
   </div>
 </template>
@@ -16,24 +15,13 @@ export default {
 }
 </script>
 
-<style scoped>
-#app {
-  width: 700px;
-  margin: 50px auto;
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f5f5f5;
-  margin: 0;
-  padding: 0;
+<style>
+.app-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100vh; /* 화면 전체 높이 사용 */
+  background-color: #e0e0e0; /* 회색 배경색 */
+  margin: 0;
 }
 </style>
