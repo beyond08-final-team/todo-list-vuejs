@@ -1,14 +1,15 @@
 // Required
 
 // 색상 커스터마이징
-// $theme-colors: (
-//   // ex)
-//   // primary: rgb(19, 19, 31),
-//   // secondary: gainsboro,
-//   // grey: aliceblue,
-//   // dark: #838080,
-//   // point: rgb(255, 248, 43),
-// );
+$theme-colors: (
+    background: #EEEEEE,
+  // ex)
+  // primary: rgb(19, 19, 31),
+  // secondary: gainsboro,
+  // grey: aliceblue,
+  // dark: #838080,
+  // point: rgb(255, 248, 43),
+);
 
 @import "bootstrap/dist/css/bootstrap.css";
 @import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
