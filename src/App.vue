@@ -1,9 +1,15 @@
 <template>
-  <b-button>hello</b-button>
-</template>
+
+  <todo/>
+  </template>
 
 <script>
-export default {};
+import todo from '@components/todo.vue';
+export default {
+  components :{
+    todo
+  }
+};
 </script>
 
 <style lang="scss" scoped></style>
