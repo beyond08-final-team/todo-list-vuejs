@@ -1,80 +1,39 @@
 <template>
-  <div class="background">
-    <div class="main-box">
-      <h1>To Do List</h1>
-      <div class="input-container">
-        <input type="text" placeholder="Enter a task here" />
-        <button class="save-button">SAVE</button>
-        <button class="get-tasks-button">GET TASKS</button>
-      </div>
-    </div>
+  <div id="app">
+    <h1>To Do App</h1>
+    <todo-list />
   </div>
 </template>
 
 <script>
-export default {};
+import TodoList from './components/TodoList.vue';
+
+export default {
+  name: 'App',
+  components: {
+    TodoList
+  }
+}
 </script>
 
-<style lang="scss" scoped>
-.background {
-  background-color: #d9d8d8;
-  height: 100vh;
-  width: 100%;
+<style scoped>
+#app {
+  width: 700px;
+  margin: 50px auto;
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.main-box {
-  width: 70%; 
-  height: 70%;
-  padding: 40px;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* 제목 스타일 */
-h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-/* 입력 필드 및 버튼 컨테이너 */
-.input-container {
-  display: flex;
-  justify-content: center; 
-  align-items: center; 
-  margin-top: 20px; 
-}
-
-/* 입력 필드 스타일 */
-input[type="text"] {
-  padding: 10px;
-  margin-right: 10px;
-  width: 250px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-/* 버튼 스타일 */
-button {
-  padding: 10px 20px;
-  margin-right: 5px;
-  border: none;
-  border-radius: 5px;
-  color: white;
-}
-
-/* SAVE 버튼 색상 스타일 */
-.save-button {
-  background-color: #4a5bdc;
-}
-
-/* GET TASKs 버튼 색상 스타일 */
-.get-tasks-button {
-  background-color: #d5a253;
+  height: 100vh;
 }
 </style>
