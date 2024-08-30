@@ -2,44 +2,28 @@
   <todo-layout>
     <b-card class="todo-card shadow">
       <b-card-title class="text-center">To do App</b-card-title>
-      <b-card-body
-        class="todo-input-group w-75 d-flex flex-nowrap justify-content-around m-auto"
-      >
-        <b-form-input class="w-50" />
-        <b-button variant="primary">SAVE</b-button>
-        <b-button variant="warning">GET TODOS</b-button>
-      </b-card-body>
-      <b-card-body class="d-flex flex-nowrap justify-content-around">
-        <b-table-simple>
-          <b-thead>
-            <b-th> No. </b-th>
-            <b-th> Todo Item </b-th>
-            <b-th> Status </b-th>
-            <b-th> Actions </b-th>
-          </b-thead>
 
-          <b-tbody>
-            <b-tr v-for="todo in todos" :key="todo.id">
-              <b-td>{{ todo.no }}</b-td>
-              <b-td>{{ todo.content }}</b-td>
-              <b-td>{{ todo.status }}</b-td>
-              <b-td class="d-none d-sm-block">
-                <b-button class="me-3" variant="danger">DELETE</b-button>
-                <b-button class="me-3" variant="dark">EDIT</b-button>
-                <b-button variant="success">FINISHED</b-button>
-              </b-td>
-              <b-td class="d-sm-none">
-                <b-dropdown variant="outline-secondary">
-                  <b-dropdown-item> DELETE </b-dropdown-item>
-                  <b-dropdown-divider />
-                  <b-dropdown-item> FINISHED </b-dropdown-item>
-                  <b-dropdown-divider />
-                  <b-dropdown-item> EDIT </b-dropdown-item>
-                </b-dropdown>
-              </b-td>
-            </b-tr>
-          </b-tbody>
-        </b-table-simple>
+      <b-card-body>
+        <todo-input-form />
+      </b-card-body>
+
+      <b-card-body class="todo-list overflow-y-scroll">
+        <todo-list :todos="todos" />
+      </b-card-body>
+    </b-card>
+  </todo-layout>
+
+  <!-- with pinia -->
+  <todo-layout>
+    <b-card class="todo-card shadow">
+      <b-card-title class="text-center">To do App</b-card-title>
+
+      <b-card-body>
+        <pinia-todo-input-form />
+      </b-card-body>
+
+      <b-card-body class="todo-list overflow-y-scroll">
+        <pinia-todo-list />
       </b-card-body>
     </b-card>
   </todo-layout>
@@ -47,10 +31,26 @@
 
 <script>
 import { TodoLayout } from "./views";
-
+import {
+  TodoInputForm,
+  TodoList,
+  PiniaTodoInputForm,
+  PiniaTodoList,
+} from "@components/index";
 export default {
   components: {
     TodoLayout,
+    TodoInputForm,
+    TodoList,
+    PiniaTodoInputForm,
+    PiniaTodoList,
+  },
+  created() {
+    this.emitter.on("addTodo", this.addTodo);
+    this.emitter.on("editTodo", this.editTodo);
+    this.emitter.on("deleteTodo", this.deleteTodo);
+    this.emitter.on("setFinished", this.setFinished);
+    this.emitter.on("setInProgress", this.setInProgress);
   },
   data() {
     return {
@@ -63,7 +63,7 @@ export default {
         {
           no: 2,
           content: "hello",
-          status: "In Progress",
+          status: "Done",
         },
         {
           no: 3,
@@ -73,14 +73,41 @@ export default {
       ],
     };
   },
+  methods: {
+    addTodo(content) {
+      // 마지막으로 저장된 todo의 no 받아오기
+      const lastTodo = this.todos[this.todos.length - 1];
+
+      const newTodo = {
+        no: lastTodo.no + 1,
+        content,
+        status: "In Progress",
+      };
+
+      this.todos.push(newTodo);
+    },
+    editTodo(newTodo) {
+      const targetTodo = this.todos.find((todo) => todo.no === newTodo.no);
+      targetTodo.content = newTodo.content;
+    },
+    deleteTodo(no) {
+      const targetIndex = this.todos.findIndex((todo) => todo.no === no);
+      this.todos.splice(targetIndex, 1);
+    },
+    setFinished(no) {
+      const targetTodo = this.todos.find((todo) => todo.no === no);
+      targetTodo.status = "Done";
+    },
+    setInProgress(no) {
+      const targetTodo = this.todos.find((todo) => todo.no === no);
+      targetTodo.status = "In Progress";
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 .todo-card {
-  height: 420px;
-}
-.todo-input-group {
-  min-width: 450px;
+  height: 500px;
 }
 </style>
