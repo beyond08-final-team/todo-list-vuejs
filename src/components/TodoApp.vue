@@ -1,6 +1,12 @@
 <template>
     <main>
         <div class="TodoBox">
+            <BCardTitle class="text-center">To Do App</BCardTitle>
+            <BCardBody class="d-flex justify-content-around m-auto">
+                <BFormInput class="w-50"/>
+                <BButton>SAVE</BButton>
+                <BButton>GET TASKS</BButton>
+            </BCardBody>
         </div>
     </main>
 </template>
