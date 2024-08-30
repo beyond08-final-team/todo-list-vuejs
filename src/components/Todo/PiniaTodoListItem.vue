@@ -94,7 +94,7 @@ export default {
     handleDelete(no) {
       this.deleteTodo(no);
     },
-    handletFinished(no) {
+    handleFinished(no) {
       this.setFinished(no);
     },
     handleInProgress(no) {
