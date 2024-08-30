@@ -158,7 +158,7 @@ export default {
     },
     toggleStatus(todo) {
       // 상태가 In progress이면 Finshed 버튼 아니면 In progress 버튼
-      todo.status = todo.status === "In progress" ? "Finshed" : "In progress";
+      todo.status = todo.status === "In progress" ? "Done" : "In progress";
     },
   },
 };
