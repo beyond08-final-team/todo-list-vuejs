@@ -121,7 +121,7 @@ export default {
   methods: {
     addTask() {
       if (this.selectedText.trim() === "") {
-        alert("Please enter a task");
+        alert("내용을 입력하세욧!!!");
         return;
       }
 
