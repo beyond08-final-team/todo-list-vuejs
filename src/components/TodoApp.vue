@@ -2,7 +2,11 @@
     <b-card>
         <b-card-title class="text-center mb-4">To Do App</b-card-title>
         <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
-            <b-form-input class="w-50 me-2" v-model="newTask" placeholder="Enter a task Here"/>
+            <b-form-input 
+                class="w-50 me-2 fixed-input"
+                maxlength="20" 
+                v-model="newTask" 
+                placeholder="Enter a task Here"/>
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
             <b-button variant="warning">GET TASKS</b-button>
         </b-card-body>
@@ -20,13 +24,33 @@
                     <b-tr v-for="(todo, idx) in todos" :key="todo.index">
                         <b-td>{{ todo.index }}</b-td>
                         <b-td v-if="todo.isEdit" class="p-1">
-                            <b-form-input v-model="todo.content" />
+                            <b-form-input
+                                v-model="todo.content"
+                                maxlength="20"
+                                class="fixed-input" />
                         </b-td>
                         <b-td v-else>{{ todo.content }}</b-td>
                         <b-td>{{ todo.status }}</b-td>
                         <b-td>
-                            <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button>
-                            <b-button class="me-2" variant="success" @click="finishTask(idx)">FINISHED</b-button>
+                            <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button><!-- status가 "In Progress"일 때 "Finish" 버튼 표시 -->
+                            <b-button
+                                v-if="todo.status === 'In Progress'"
+                                variant="success"
+                                @click="setFinish(idx)"
+                                class="me-2"
+                            >
+                                FINISH
+                            </b-button>
+
+                            <!-- status가 "Done"일 때 "In Progress" 버튼 표시 -->
+                            <b-button
+                                v-else
+                                variant="warning"
+                                @click="setInProgress(idx)"
+                                class="me-2"
+                            >
+                                IN PROGRESS
+                            </b-button>
                             <b-button v-if="!todo.isEdit" class="me-2" variant="dark" @click="editTask(todo)">EDIT</b-button>
                             <b-button v-if="todo.isEdit" class="me-2" variant="primary" @click="saveEditTask(todo)">SAVE</b-button>
                         </b-td>
@@ -83,8 +107,11 @@ export default {
                 todo.index = i + 1;
             })
         },
-        finishTask(idx) {
+        setFinish(idx) {
             this.todos[idx].status = 'Done';
+        },
+        setInProgress(idx) {
+            this.todos[idx].status = 'In Progress';
         },
         editTask(todo) {
             todo.isEdit = true;
@@ -104,5 +131,9 @@ export default {
     background-color: white; /* 박스의 배경색 */
     border: 1px solid #ccc;  /* 박스의 테두리 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 박스 그림자 (옵션) */
+}
+.fixed-input{
+    width: 200px;
+    max-width: 200px;
 }
 </style>
