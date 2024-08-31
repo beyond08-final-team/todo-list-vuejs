@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center vh-100 background">
+  <div class="d-flex justify-content-center align-items-center vh-100 c">
     <TodoApp />
   </div>
 </template>
@@ -15,7 +15,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .background{
+  .c{
     background-color: #EEEEEE;
   }
 </style>
