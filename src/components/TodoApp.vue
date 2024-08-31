@@ -19,12 +19,16 @@
                 <b-tbody>
                     <b-tr v-for="(todo, idx) in todos" :key="todo.index">
                         <b-td>{{ todo.index }}</b-td>
-                        <b-td>{{ todo.content }}</b-td>
+                        <b-td v-if="todo.isEdit" class="p-1">
+                            <b-form-input v-model="todo.content" />
+                        </b-td>
+                        <b-td v-else>{{ todo.content }}</b-td>
                         <b-td>{{ todo.status }}</b-td>
                         <b-td>
                             <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button>
                             <b-button class="me-2" variant="success" @click="finishTask(idx)">FINISHED</b-button>
-                            <b-button class="me-2" variant="dark" @click="editTask">EDIT</b-button>
+                            <b-button v-if="!todo.isEdit" class="me-2" variant="dark" @click="editTask(todo)">EDIT</b-button>
+                            <b-button v-if="todo.isEdit" class="me-2" variant="primary" @click="saveEditTask(todo)">SAVE</b-button>
                         </b-td>
                     </b-tr>
                 </b-tbody>
@@ -40,6 +44,7 @@ export default {
     data() {
         return {
             newTask: '',
+            isEdit: false,
             todos: [
                 {
                 index: 1,
@@ -65,7 +70,8 @@ export default {
                 this.todos.push({
                     index: this.todos.length + 1,
                     content: this.newTask,
-                    status: "In Progress" 
+                    status: "In Progress" ,
+                    isEdit: false
                 })
                 /* 입력 창 초기화 */
                 this.newTask = '';
@@ -80,8 +86,13 @@ export default {
         finishTask(idx) {
             this.todos[idx].status = 'Done';
         },
-        editTask() {
-
+        editTask(todo) {
+            todo.isEdit = true;
+        },
+        saveEditTask(todo) {
+            if (todo.content.trim()) {
+                todo.isEdit = false;
+            }
         }
     }
 }
