@@ -1,25 +1,21 @@
 <template>
-  <div id="app">
-    <ToDoApp />
+  <div class="d-flex justify-content-center align-items-center vh-100 c">
+    <TodoApp />
   </div>
 </template>
 
 <script>
-import ToDoApp from './components/ToDoApp.vue';
-
+import TodoApp from '@components/TodoApp.vue';
 export default {
-  name: 'App',
   components: {
-    ToDoApp
+    TodoApp,
+
   }
 };
 </script>
 
-<style>
-#app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+<style lang="scss" scoped>
+  .c{
+    background-color: #EEEEEE;
+  }
 </style>
