@@ -1,36 +1,36 @@
 <template>
-    <div class="todoBox shadow-sm p-4 mb-5 bg-white rounded">
-        <BCardTitle class="text-center mb-4">To Do App</BCardTitle>
-        <BCardBody class="d-flex w-75 justify-content-around m-auto mb-4">
-            <BFormInput class="w-50 me-2" v-model="newTask" placeholder="Enter a task Here"/>
-            <BButton variant="primary" @click="saveTask">SAVE</BButton>
-            <BButton variant="warning">GET TASKS</BButton>
-        </BCardBody>
-        <BCardBody class="d-flex justify-content-around">
-            <BTableSimple class="mt-4">
-                <BThead head-variant="dark">
-                    <BTr>
-                        <BTh>No.</BTh>
-                        <BTh>Todo item</BTh>
-                        <BTh>Status</BTh>
-                        <BTh>Actions</BTh>
-                    </BTr>
-                </BThead>
-                <BTbody>
-                    <BTr v-for="(todo, idx) in todos" :key="todo.index">
-                        <BTd>{{ todo.index }}</BTd>
-                        <BTd>{{ todo.content }}</BTd>
-                        <BTd>{{ todo.status }}</BTd>
-                        <BTd>
+    <b-card>
+        <b-card-title class="text-center mb-4">To Do App</b-card-title>
+        <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
+            <b-form-input class="w-50 me-2" v-model="newTask" placeholder="Enter a task Here"/>
+            <b-button variant="primary" @click="saveTask">SAVE</b-button>
+            <b-button variant="warning">GET TASKS</b-button>
+        </b-card-body>
+        <b-card-body class="d-flex justify-content-around">
+            <b-table-simple class="mt-4">
+                <b-thead head-variant="dark">
+                    <b-tr>
+                        <b-th>No.</b-th>
+                        <b-th>Todo item</b-th>
+                        <b-th>Status</b-th>
+                        <b-th>Actions</b-th>
+                    </b-tr>
+                </b-thead>
+                <b-tbody>
+                    <b-tr v-for="(todo, idx) in todos" :key="todo.index">
+                        <b-td>{{ todo.index }}</b-td>
+                        <b-td>{{ todo.content }}</b-td>
+                        <b-td>{{ todo.status }}</b-td>
+                        <b-td>
                             <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button>
                             <b-button class="me-2" variant="success" @click="finishTask(idx)">FINISHED</b-button>
                             <b-button class="me-2" variant="dark" @click="editTask">EDIT</b-button>
-                        </BTd>
-                    </BTr>
-                </BTbody>
-            </BTableSimple>
-        </BCardBody>
-    </div>
+                        </b-td>
+                    </b-tr>
+                </b-tbody>
+            </b-table-simple>
+        </b-card-body>
+    </b-card>
 </template>
 
 <script>
