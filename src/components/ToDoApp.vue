@@ -70,14 +70,27 @@ export default {
                 console.error("Error fetching tasks:", error);
             }
         },
-        deleteTask(idx) {
-            this.todos.splice(idx, 1);
-            this.todos.forEach((todo, i) => {
-                todo.index = i + 1;
-            })
+        async deleteTask(id) {
+            try {
+                await axios.delete(`/api/v1/todo/delete/${id}`);
+                this.getTasks(); // 삭제 후 리스트 갱신
+            } catch (error) {
+                console.error("Error deleting task:", error);
+            }
         },
-        finishTask(idx) {
-            this.todos[idx].status = 'Done';
+        async finishTask(id) {
+            try {
+                const todo = this.todos.find((t) => t.id === id);
+                if (todo) {
+                await axios.put(`/api/v1/todo/update/${id}`, {
+                    ...todo,
+                    status: "Done",
+                });
+                this.getTasks(); // 상태 변경 후 리스트 갱신
+                }
+            } catch (error) {
+                console.error("Error finishing task:", error);
+            }
         },
         editTask() {
 
