@@ -4,7 +4,7 @@
         <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
             <b-form-input class="w-50 me-2" v-model="newTask" placeholder="Enter a task Here"/>
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
-            <b-button variant="warning">GET TASKS</b-button>
+            <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
         </b-card-body>
         <b-card-body class="d-flex justify-content-around">
             <b-table-simple class="mt-4">
@@ -22,9 +22,9 @@
                         <b-td>{{ todo.content }}</b-td>
                         <b-td>{{ todo.status }}</b-td>
                         <b-td>
-                            <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button>
-                            <b-button class="me-2" variant="success" @click="finishTask(idx)">FINISHED</b-button>
-                            <b-button class="me-2" variant="dark" @click="editTask">EDIT</b-button>
+                            <b-button class="me-2" variant="danger" @click="deleteTask(todo.id)">DELETE</b-button>
+                            <b-button class="me-2" variant="success" @click="finishTask(todo.id)">FINISHED</b-button>
+                            <b-button class="me-2" variant="dark" @click="editTask(todo.id)">EDIT</b-button>
                         </b-td>
                     </b-tr>
                 </b-tbody>
@@ -35,40 +35,39 @@
 
 <script>
 import { BTableSimple } from 'bootstrap-vue-next';
+import axios from 'axios';
 
 export default {
     data() {
         return {
             newTask: '',
-            todos: [
-                {
-                index: 1,
-                content: "Buy groceries for next week",
-                status: "In Progress",
-                },
-                {
-                index: 2,
-                content: "Renew car insurance",
-                status: "In Progress",
-                },
-                {
-                index: 3,
-                content: "Sign up for online course",
-                status: "In Progress",
-                },
-            ],
+            todos: [],
         };
     },
     methods: {
-        saveTask() {
-            if(this.newTask.trim()){
-                this.todos.push({
-                    index: this.todos.length + 1,
+        async saveTask() {
+            if (this.newTask.trim()) {
+                try {
+                await axios.post("/api/v1/todo/register", {
                     content: this.newTask,
-                    status: "In Progress" 
-                })
-                /* 입력 창 초기화 */
-                this.newTask = '';
+                    status: "InProgress", // 기본 상태로 설정
+                });
+                this.newTask = ""; // 입력 창 초기화
+                this.getTasks(); // 저장 후 리스트 갱신
+                } catch (error) {
+                    console.error("Error saving task:", error);
+                }
+            }
+        },
+        async getTasks() {
+            try {
+                const response = await axios.get("/api/v1/todo/list");
+                this.todos = response.data.map((todo, index) => ({
+                ...todo,
+                index: index + 1,
+                }));
+            } catch (error) {
+                console.error("Error fetching tasks:", error);
             }
         },
         deleteTask(idx) {

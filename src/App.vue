@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TodoApp from '@components/TodoApp.vue';
+import TodoApp from './components/ToDoApp.vue';
 export default {
   components: {
     TodoApp,
