@@ -82,11 +82,11 @@ export default {
             try {
                 const todo = this.todos.find((t) => t.id === id);
                 if (todo) {
-                await axios.put(`/api/v1/todo/update/${id}`, {
-                    ...todo,
-                    status: "Done",
-                });
-                this.getTasks(); // 상태 변경 후 리스트 갱신
+                    await axios.put(`/api/v1/todo/update/${id}`, {
+                        ...todo,
+                        status: "Done",
+                    });
+                    this.getTasks(); // 상태 변경 후 리스트 갱신
                 }
             } catch (error) {
                 console.error("Error finishing task:", error);
