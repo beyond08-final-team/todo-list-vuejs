@@ -6,7 +6,7 @@
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
             <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
         </b-card-body>
-        <b-card-body class="d-flex justify-content-around">
+        <b-card-body class="d-flex justify-content-around todo-list-body">
             <b-table-simple class="mt-4">
                 <b-thead head-variant="dark">
                     <b-tr>
@@ -19,12 +19,30 @@
                 <b-tbody>
                     <b-tr v-for="(todo, idx) in todos" :key="todo.index">
                         <b-td>{{ todo.index }}</b-td>
-                        <b-td>{{ todo.content }}</b-td>
+                        <b-td>
+                            <div v-if="todo.isEditing">
+                                <b-form-input 
+                                    v-model="todo.content" 
+                                    @keyup.enter="saveEdit(todo)"
+                                    @blur="saveEdit(todo)"
+                                />
+                            </div>
+                            <div v-else>
+                                {{ todo.content }}
+                            </div>
+                        </b-td>
                         <b-td>{{ todo.status }}</b-td>
                         <b-td>
                             <b-button class="me-2" variant="danger" @click="deleteTask(todo.id)">DELETE</b-button>
-                            <b-button class="me-2" variant="success" @click="finishTask(todo.id)">FINISHED</b-button>
-                            <b-button class="me-2" variant="dark" @click="editTask(todo.id)">EDIT</b-button>
+                            <b-button 
+                                class="me-2" 
+                                :variant="todo.status === 'Done' ? 'warning' : 'success'" 
+                                @click="toggleStatus(todo)"
+                            >
+                                {{ todo.status === 'Done' ? 'In Progress' : 'Finished' }}
+                            </b-button>
+                            <b-button v-if="!todo.isEditing" class="me-2" variant="dark" @click="editTask(todo)">EDIT</b-button>
+                            <b-button v-if="todo.isEditing" class="me-2" variant="primary" @click="saveEdit(todo)">SAVE</b-button>
                         </b-td>
                     </b-tr>
                 </b-tbody>
@@ -50,10 +68,10 @@ export default {
                 try {
                 await axios.post("/api/v1/todo/register", {
                     content: this.newTask,
-                    status: "InProgress", // 기본 상태로 설정
+                    status: "InProgress",
                 });
-                this.newTask = ""; // 입력 창 초기화
-                this.getTasks(); // 저장 후 리스트 갱신
+                this.newTask = "";
+                this.getTasks();
                 } catch (error) {
                     console.error("Error saving task:", error);
                 }
@@ -65,6 +83,7 @@ export default {
                 this.todos = response.data.map((todo, index) => ({
                 ...todo,
                 index: index + 1,
+                isEditing: false,
                 }));
             } catch (error) {
                 console.error("Error fetching tasks:", error);
@@ -73,37 +92,54 @@ export default {
         async deleteTask(id) {
             try {
                 await axios.delete(`/api/v1/todo/delete/${id}`);
-                this.getTasks(); // 삭제 후 리스트 갱신
+                this.getTasks();
             } catch (error) {
                 console.error("Error deleting task:", error);
             }
         },
-        async finishTask(id) {
+        async toggleStatus(todo) {
             try {
-                const todo = this.todos.find((t) => t.id === id);
-                if (todo) {
-                    await axios.put(`/api/v1/todo/update/${id}`, {
-                        ...todo,
-                        status: "Done",
-                    });
-                    this.getTasks(); // 상태 변경 후 리스트 갱신
-                }
+                const newStatus = todo.status === "Done" ? "InProgress" : "Done";
+                await axios.put(`/api/v1/todo/update/${todo.id}`, {
+                    content: todo.content,
+                    status: newStatus,
+                });
+                this.getTasks();
             } catch (error) {
-                console.error("Error finishing task:", error);
+                console.error("Error toggling task status:", error);
             }
         },
-        editTask() {
-
+        editTask(todo) {
+            todo.isEditing = true;
+        },
+        async saveEdit(todo) {
+            try {
+                await axios.put(`/api/v1/todo/update/${todo.id}`, {
+                    content: todo.content,
+                    status: todo.status,
+                });
+                todo.isEditing = false;
+                this.getTasks();
+            } catch (error) {
+                console.error("Error saving task:", error);
+            }
         }
+    },
+    mounted() {
+        this.getTasks();
     }
 }
 </script>
 
 <style scoped>
+.todo-list-body {
+    height: 300px;
+    overflow-y: auto;
+}
 .todoBox{
     min-width: 720px;
-    background-color: white; /* 박스의 배경색 */
-    border: 1px solid #ccc;  /* 박스의 테두리 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 박스 그림자 (옵션) */
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 </style>
