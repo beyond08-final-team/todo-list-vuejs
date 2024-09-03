@@ -3,12 +3,14 @@
         <b-card-title class="text-center mb-4">To Do App</b-card-title>
         <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
             <b-form-input 
-                class="w-50 me-2 fixed-input"
+                class="w-50 me-2 fixed_input"
                 maxlength="20" 
                 v-model="newTask" 
                 placeholder="Enter a task Here"/>
-            <b-button variant="primary" @click="saveTask">SAVE</b-button>
-            <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
+            <div class="d-flex">
+                <b-button variant="primary" class="me-2" @click="saveTask">SAVE</b-button>
+                <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
+            </div>
         </b-card-body>
         <b-card-body class="d-flex justify-content-around todolist_body">
             <b-table-simple class="mt-4">
@@ -26,31 +28,21 @@
                         <b-td v-if="todo.isEdit" class="p-1">
                             <b-form-input
                                 v-model="todo.content"
-                                :style="{ width: `${todo.content.length * 1}rem` }"
+                                class="fixed_input"
                                 maxlength="20"/>
                         </b-td>
                         <b-td v-else>{{ todo.content }}</b-td>
                         <b-td>{{ todo.status }}</b-td>
                         <b-td>
-                            <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button><!-- status가 "In Progress"일 때 "Finish" 버튼 표시 -->
+                            <b-button class="me-2" variant="danger" @click="deleteTask(todo)">DELETE</b-button><!-- status가 "In Progress"일 때 "Finish" 버튼 표시 -->
                             <b-button
-                                v-if="todo.status === 'InProgress'"
-                                variant="success"
-                                @click="setFinish(idx)"
-                                class="me-2"
+                                :variant="todo.status === 'Done' ? 'warning' : 'success'"
+                                @click="toggleStatus(todo)"
+                                class="me-2 toggle_button"
                             >
-                                FINISH
+                                {{ todo.status === 'Done' ? 'In Progress' : 'FINISH' }}
                             </b-button>
 
-                            <!-- status가 "Done"일 때 "In Progress" 버튼 표시 -->
-                            <b-button
-                                v-else
-                                variant="warning"
-                                @click="setInProgress(idx)"
-                                class="me-2"
-                            >
-                                IN PROGRESS
-                            </b-button>
                             <b-button v-if="!todo.isEdit" class="me-2" variant="dark" @click="editTask(todo)">EDIT</b-button>
                             <b-button v-if="todo.isEdit" class="me-2" variant="primary" @click="saveEditTask(todo)">SAVE</b-button>
                         </b-td>
@@ -70,23 +62,7 @@ export default {
         return {
             newTask: '',
             isEdit: false,
-            todos: [
-                // {
-                // index: 1,
-                // content: "Buy groceries for next week",
-                // status: "In Progress",
-                // },
-                // {
-                // index: 2,
-                // content: "Renew car insurance",
-                // status: "In Progress",
-                // },
-                // {
-                // index: 3,
-                // content: "Sign up for online course",
-                // status: "In Progress",
-                // },
-            ],
+            todos: [],
         };
     },
     methods: {
@@ -100,32 +76,44 @@ export default {
                     isEdit: false,  // 가져온 데이터에 isEdit 속성 추가
                 }));
             } catch(error) {
-                console.error("Error fetch tasks:", error);
+                console.error("Error get tasks:", error);
             }
         },
-        saveTask() {
+        async saveTask() {
             if(this.newTask.trim()){
-                this.todos.push({
-                    index: this.todos.length + 1,
+                try {
+                await axios.post('/api/todo/', {
                     content: this.newTask,
                     status: "InProgress" ,
-                    isEdit: false
-                })
-                /* 입력 창 초기화 */
+                });
+            
                 this.newTask = '';
+                this.getTasks();
+
+                } catch(error) {
+                    console.error("Error save task:", error);
+                }
             }
         },
-        deleteTask(idx) {
-            this.todos.splice(idx, 1);
-            this.todos.forEach((todo, i) => {
-                todo.index = i + 1;
-            })
+        async deleteTask(id) {
+            try {
+                await axios.delete(`/api/todo/${id}`);
+                this.getTasks();
+            } catch(error) {
+                console.error("Error delete task:", error);
+            }
         },
-        setFinish(idx) {
-            this.todos[idx].status = 'Done';
-        },
-        setInProgress(idx) {
-            this.todos[idx].status = 'InProgress';
+        async toggleStatus(todo){
+            try {
+                const newStatus = todo.status === "Done" ? "InProgress" : "Done";
+                await axios.patch(`/api/todo/${todo.id}`, {
+                    content: todo.content,
+                    status: newStatus
+                });
+                this.getTasks();
+            } catch(error) {
+                console.error("Error toggle task status:", error);
+            }
         },
         editTask(todo) {
             todo.isEdit = true;
@@ -146,12 +134,14 @@ export default {
     border: 1px solid #ccc;  /* 박스의 테두리 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 박스 그림자 (옵션) */
 }
-.fixed-input {
-    width: 200px;
-    max-width: 200px;
+.fixed_input {
+    max-width: 360px;
 }
 .todolist_body {
     max-height: 400px;
     overflow-y: auto;
+}
+.toggle_button {
+    width: 125px;
 }
 </style>
