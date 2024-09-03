@@ -6,7 +6,8 @@
                 class="w-50 me-2 fixed_input"
                 maxlength="20" 
                 v-model="newTask" 
-                placeholder="Enter a task Here"/>
+                placeholder="Enter a task Here"
+                @keyup.enter="saveTask"/>
             <div class="d-flex">
                 <b-button variant="primary" class="me-2" @click="saveTask">SAVE</b-button>
                 <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
@@ -29,12 +30,13 @@
                             <b-form-input
                                 v-model="todo.content"
                                 class="fixed_input"
-                                maxlength="20"/>
+                                maxlength="20"
+                                @keyup.enter="saveEditTask(todo)"/>
                         </b-td>
                         <b-td v-else>{{ todo.content }}</b-td>
                         <b-td>{{ todo.status }}</b-td>
                         <b-td>
-                            <b-button class="me-2" variant="danger" @click="deleteTask(todo)">DELETE</b-button><!-- status가 "In Progress"일 때 "Finish" 버튼 표시 -->
+                            <b-button class="me-2" variant="danger" @click="deleteTask(todo.id)">DELETE</b-button><!-- status가 "In Progress"일 때 "Finish" 버튼 표시 -->
                             <b-button
                                 :variant="todo.status === 'Done' ? 'warning' : 'success'"
                                 @click="toggleStatus(todo)"
@@ -68,7 +70,7 @@ export default {
     methods: {
         async getTasks() {
             try {
-                const response = await axios.get('/api/todo/list');
+                const response = await axios.get(`/api/todo/list`);
                 console.log(response.data);
                 this.todos = response.data.result.map((todo, index) => ({
                     ...todo, 
@@ -82,7 +84,7 @@ export default {
         async saveTask() {
             if(this.newTask.trim()){
                 try {
-                await axios.post('/api/todo/', {
+                await axios.post(`/api/todo/`, {
                     content: this.newTask,
                     status: "InProgress" ,
                 });
@@ -118,9 +120,19 @@ export default {
         editTask(todo) {
             todo.isEdit = true;
         },
-        saveEditTask(todo) {
-            if (todo.content.trim()) {
-                todo.isEdit = false;
+        async saveEditTask(todo) {
+            try {
+                if (todo.content.trim()) {
+                    await axios.patch(`/api/todo/${todo.id}`, {
+                        content: todo.content,
+                        status: todo.status,
+                    });
+
+                    todo.isEdit = false;
+                    this.getTasks();
+            }
+            } catch(error) {
+                console.error("Error update task content:", error);
             }
         }
     }
@@ -138,7 +150,7 @@ export default {
     max-width: 360px;
 }
 .todolist_body {
-    max-height: 400px;
+    max-height: 360px;
     overflow-y: auto;
 }
 .toggle_button {
