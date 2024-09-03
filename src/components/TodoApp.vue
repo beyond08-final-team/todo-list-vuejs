@@ -10,7 +10,7 @@
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
             <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
         </b-card-body>
-        <b-card-body class="d-flex justify-content-around">
+        <b-card-body class="d-flex justify-content-around todolist_body">
             <b-table-simple class="mt-4">
                 <b-thead head-variant="dark">
                     <b-tr>
@@ -26,8 +26,8 @@
                         <b-td v-if="todo.isEdit" class="p-1">
                             <b-form-input
                                 v-model="todo.content"
-                                maxlength="20"
-                                class="fixed-input" />
+                                :style="{ width: `${todo.content.length * 1}rem` }"
+                                maxlength="20"/>
                         </b-td>
                         <b-td v-else>{{ todo.content }}</b-td>
                         <b-td>{{ todo.status }}</b-td>
@@ -149,5 +149,9 @@ export default {
 .fixed-input {
     width: 200px;
     max-width: 200px;
+}
+.todolist_body {
+    max-height: 400px;
+    overflow-y: auto;
 }
 </style>
