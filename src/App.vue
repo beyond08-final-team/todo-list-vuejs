@@ -1,14 +1,14 @@
 <template>
   <div class="d-flex justify-content-center align-items-center vh-100 c">
-    <TodoApp />
+    <todoApp />
   </div>
 </template>
 
 <script>
-import TodoApp from '@components/TodoApp.vue';
+import todoApp from '@components/todoApp.vue';
 export default {
   components: {
-    TodoApp,
+    todoApp,
 
   }
 };

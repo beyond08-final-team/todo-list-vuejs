@@ -1,5 +1,5 @@
 <template>
-    <b-card>
+    <b-card class="todoBox">
         <b-card-title class="text-center mb-4">To Do App</b-card-title>
         <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
             <b-form-input 
@@ -8,7 +8,7 @@
                 v-model="newTask" 
                 placeholder="Enter a task Here"/>
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
-            <b-button variant="warning">GET TASKS</b-button>
+            <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
         </b-card-body>
         <b-card-body class="d-flex justify-content-around">
             <b-table-simple class="mt-4">
@@ -34,7 +34,7 @@
                         <b-td>
                             <b-button class="me-2" variant="danger" @click="deleteTask(idx)">DELETE</b-button><!-- status가 "In Progress"일 때 "Finish" 버튼 표시 -->
                             <b-button
-                                v-if="todo.status === 'In Progress'"
+                                v-if="todo.status === 'InProgress'"
                                 variant="success"
                                 @click="setFinish(idx)"
                                 class="me-2"
@@ -63,6 +63,7 @@
 
 <script>
 import { BTableSimple } from 'bootstrap-vue-next';
+import axios from 'axios';
 
 export default {
     data() {
@@ -70,31 +71,44 @@ export default {
             newTask: '',
             isEdit: false,
             todos: [
-                {
-                index: 1,
-                content: "Buy groceries for next week",
-                status: "In Progress",
-                },
-                {
-                index: 2,
-                content: "Renew car insurance",
-                status: "In Progress",
-                },
-                {
-                index: 3,
-                content: "Sign up for online course",
-                status: "In Progress",
-                },
+                // {
+                // index: 1,
+                // content: "Buy groceries for next week",
+                // status: "In Progress",
+                // },
+                // {
+                // index: 2,
+                // content: "Renew car insurance",
+                // status: "In Progress",
+                // },
+                // {
+                // index: 3,
+                // content: "Sign up for online course",
+                // status: "In Progress",
+                // },
             ],
         };
     },
     methods: {
+        async getTasks() {
+            try {
+                const response = await axios.get('/api/todo/list');
+                console.log(response.data);
+                this.todos = response.data.result.map((todo, index) => ({
+                    ...todo, 
+                    index: index + 1,
+                    isEdit: false,  // 가져온 데이터에 isEdit 속성 추가
+                }));
+            } catch(error) {
+                console.error("Error fetch tasks:", error);
+            }
+        },
         saveTask() {
             if(this.newTask.trim()){
                 this.todos.push({
                     index: this.todos.length + 1,
                     content: this.newTask,
-                    status: "In Progress" ,
+                    status: "InProgress" ,
                     isEdit: false
                 })
                 /* 입력 창 초기화 */
@@ -111,7 +125,7 @@ export default {
             this.todos[idx].status = 'Done';
         },
         setInProgress(idx) {
-            this.todos[idx].status = 'In Progress';
+            this.todos[idx].status = 'InProgress';
         },
         editTask(todo) {
             todo.isEdit = true;
@@ -126,13 +140,13 @@ export default {
 </script>
 
 <style scoped>
-.todoBox{
+.todoBox {
     min-width: 720px;
     background-color: white; /* 박스의 배경색 */
     border: 1px solid #ccc;  /* 박스의 테두리 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 박스 그림자 (옵션) */
 }
-.fixed-input{
+.fixed-input {
     width: 200px;
     max-width: 200px;
 }
