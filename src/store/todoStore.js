@@ -9,15 +9,11 @@ export const useTodoStore = defineStore("todo", {
     actions: {
         async getTodos() {
             try {
-                console.log("getTodos called");
                 const response = await axios.get(`/api/todo/list`);
-                console.log('API response:', response.data); 
-                this.todos = response.data.result.map((todo, index) => ({
+                this.todos = response.data.result.map(todo => ({
                     ...todo, 
-                    index: index + 1,
                     isEdit: false,
                 }));
-                console.log('Updated todos:', this.todos); 
             } catch(error) {
                 console.error("Error get tasks:", error);
             }
@@ -31,7 +27,7 @@ export const useTodoStore = defineStore("todo", {
                 });
             
                 this.newTask = '';
-                this.getTodos();
+                await this.getTodos();
 
                 } catch(error) {
                     console.error("Error save task:", error);
@@ -41,7 +37,7 @@ export const useTodoStore = defineStore("todo", {
         async deleteTodo(id) {
             try {
                 await axios.delete(`/api/todo/${id}`);
-                this.getTodos();
+                await this.getTodos();
             } catch(error) {
                 console.error("Error delete task:", error);
             }
@@ -53,7 +49,7 @@ export const useTodoStore = defineStore("todo", {
                     content: todo.content,
                     status: newStatus
                 });
-                this.getTodos();
+                await this.getTodos();
             } catch(error) {
                 console.error("Error toggle task status:", error);
             }
