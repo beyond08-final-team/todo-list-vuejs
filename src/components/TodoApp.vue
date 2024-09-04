@@ -5,7 +5,7 @@
             <b-form-input 
                 class="w-50 me-2 fixed_input"
                 maxlength="24" 
-                v-model="newTask" 
+                v-model="todoStore.newTask" 
                 placeholder="Enter a task Here"
                 @keyup.enter="createTodo"/>
             <div class="d-flex">
@@ -55,22 +55,45 @@
     </b-card>
 </template>
 
-
-<script setup>
+<script>
 import { useTodoStore } from '../store/todoStore';
-import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
 
-const todoStore = useTodoStore();
-
-const { todos, newTask } = storeToRefs(todoStore);
-const { getTodos, createTodo, deleteTodo, editTodo, toggleStatus, openEditInput } = todoStore;
-
-// 컴포넌트가 마운트될 때 자동으로 할 일 목록을 가져옵니다.
-onMounted(() => {
-    getTodos();
-});
-
+export default {
+    data() {
+        return {
+            todoStore: useTodoStore(),
+        };
+    },
+    computed: {
+        todos() {
+            return this.todoStore.todos;
+        },
+    },
+    methods: {
+        getTodos() {
+            return this.todoStore.getTodos();
+        },
+        createTodo() {
+            return this.todoStore.createTodo();
+        },
+        deleteTodo(id) {
+            return this.todoStore.deleteTodo(id);
+        },
+        editTodo(id, task) {
+            return this.todoStore.editTodo(id, task);
+        },
+        toggleStatus(id) {
+            return this.todoStore.toggleStatus(id);
+        },
+        openEditInput(id) {
+            return this.todoStore.openEditInput(id);
+        },
+    },
+  // 컴포넌트가 마운트될 때 자동으로 할 일 목록을 가져옵니다.
+    mounted() {
+        this.getTodos();
+    },
+};
 </script>
 
 <style scoped>
