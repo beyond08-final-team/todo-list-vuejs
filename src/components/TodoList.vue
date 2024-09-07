@@ -1,6 +1,6 @@
 <template>
     <div>
-        <BTableSimple class="task-table" hover small caption-top responsive table-striped text-center>
+        <b-table-simple class="m-lg-4" hover small caption-top responsive table-striped text-center>
             <colgroup>
                 <col />
                 <col />
@@ -8,114 +8,68 @@
                 <col />
                 <col />
             </colgroup>
-            <BThead head-variant="dark">
-                <BTr>
-                    <BTh>No</BTh>
-                    <BTh colspan="2">Todo item</BTh>
-                    <BTh>Status</BTh>
-                    <BTh>Actions</BTh>
-                </BTr>
-            </BThead>
-            <BTbody>
-                <BTr v-for="(task, index) in tasks" :key="task.no">
-                    <BTh>{{ index + 1 }}</BTh>
-                    <BTd colspan="2" class="text-align">
+            <b-thead head-variant="dark">
+                <b-tr>
+                    <b-th>No</b-th>
+                    <b-th colspan="2">Todo item</b-th>
+                    <b-th>Status</b-th>
+                    <b-th>Actions</b-th>
+                </b-tr>
+            </b-thead>
+            <b-tbody>
+                <b-tr v-for="(task, index) in tasks" :key="task.no">
+                    <b-th>{{ index + 1 }}</b-th>
+                    <b-td colspan="2" class="text-align">
                         <template v-if="!task.editStatus">
                             {{ task.todoItem }}
                         </template>
                         <template v-if="task.editStatus">
                             <input v-model="task.editText" placeholder="Enter a todoItem here" class="input-task">
                         </template>
-                    </BTd>
-                    <BTd>{{ task.status }}</BTd>
-                    <BTd>
-                        <div class="btns">
-                            <BButton @click="deleted(task.no)" class="save btn" variant="danger">DELETE</BButton>
-                            <BButton @click="edited(task.no)" class="btn" variant="primary">EDIT</BButton>
+                    </b-td>
+                    <b-td>{{ task.status }}</b-td>
+                    <b-td>
+                        <div class="d-flex gap-2">
+                            <b-button @click="deleted(task.no)" class="fw-bold text-center fs-6"
+                                variant="danger">DELETE</b-button>
+                            <b-button @click="edited(task.no)" class="fw-bold text-center fs-6"
+                                variant="primary">EDIT</b-button>
                             <template v-if="task.status === 'In Progress'">
-                                <BButton @click="finished(task.no)" class="btn" variant="success">FINISH</BButton>
+                                <b-button @click="finished(task.no)" class="fw-bold text-center fs-6"
+                                    variant="success">FINISH</b-button>
                             </template>
                             <template v-if="task.status === 'Done'">
-                                <BButton @click="inProgress(task.no)" class="btn" variant="warning">In Progress
-                                </BButton>
+                                <b-button @click="inProgress(task.no)" class="fw-bold text-center fs-6"
+                                    variant="warning">In Progress
+                                </b-button>
                             </template>
                         </div>
-                    </BTd>
-                </BTr>
-            </BTbody>
-        </BTableSimple>
+                    </b-td>
+                </b-tr>
+            </b-tbody>
+        </b-table-simple>
     </div>
 </template>
 
 <script setup>
-    import { ref } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 
-    const tasks = ref([
-        { no: 1, todoItem: 'Buy groceries for week', status: 'In Progress', editStatus: false },
-        { no: 2, todoItem: 'Renew car insurance', status: 'In Progress', editStatus: false },
-        { no: 3, todoItem: 'Sign up for online course', status: 'In Progress', editStatus: false }
-    ])
+const props = defineProps(['tasks'])
+const emit = defineEmits(['task-deleted', 'task-edited', 'task-finished', 'task-in-progress'])
 
-    const deleted = (taskId) => {
-        tasks.value = tasks.value.filter(task => task.no !== taskId);
-        console.log('Task 삭제 - ', taskId)
-    }
+const deleted = (taskId) => {
+    emit('task-deleted', taskId)
+}
 
-    const edited = (taskId) => {
-        const task = tasks.value.find(task => task.no === taskId)
+const edited = (taskId) => {
+    emit('task-edited', taskId)
+}
 
-        if (task) {
-            if (task.editStatus) {
-                if (task.editText.length < 6 || task.editText.length > 20) {
-                    alert('최소 6자 이상 최대 20자 이하여야 합니다.');
-                    return;
-                }
-                task.todoItem = task.editText
-                task.editText = ''
-            }
-            task.editStatus = !task.editStatus
-        }
-        console.log('Task 수정 및 저장 - ', taskId)
-    }
+const finished = (taskId) => {
+    emit('task-finished', taskId)
+}
 
-    const finished = (taskId) => {
-        const task = tasks.value.find(task => task.no === taskId)
-        if (task) {
-            task.status = 'Done'
-        }
-        console.log('Task 완료 - ', taskId)
-    }
-
-    const inProgress = (taskId) => {
-        const task = tasks.value.find(task => task.no === taskId)
-        if (task) {
-            task.status = 'In Progress'
-        }
-        console.log('Task 진행 중 - ', taskId)
-    }
+const inProgress = (taskId) => {
+    emit('task-in-progress', taskId)
+}
 </script>
-
-<style scoped>
-    .task-table {
-        border-collapse: separate;
-        border-spacing: 20px 20px;
-        width: 90%;
-        margin: 0 auto;
-    }
-
-    .btn {
-        border: none;
-        padding: 10px 20px;
-        font-size: 13px;
-        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    }
-
-    .btns {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-</style>
