@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import { BTableSimple } from 'bootstrap-vue-next';
 import axios from 'axios';
 
 export default {
@@ -66,7 +65,7 @@ export default {
         async saveTask() {
             if (this.newTask.trim()) {
                 try {
-                await axios.post("/api/v1/todo/register", {
+                await axios.post("/api/v1/todos", {
                     content: this.newTask,
                     status: "InProgress",
                 });
@@ -79,7 +78,7 @@ export default {
         },
         async getTasks() {
             try {
-                const response = await axios.get("/api/v1/todo/list");
+                const response = await axios.get("/api/v1/todos");
                 this.todos = response.data.map((todo, index) => ({
                 ...todo,
                 index: index + 1,
@@ -91,7 +90,7 @@ export default {
         },
         async deleteTask(id) {
             try {
-                await axios.delete(`/api/v1/todo/delete/${id}`);
+                await axios.delete(`/api/v1/todos/${id}`);
                 this.getTasks();
             } catch (error) {
                 console.error("Error deleting task:", error);
@@ -100,8 +99,7 @@ export default {
         async toggleStatus(todo) {
             try {
                 const newStatus = todo.status === "Done" ? "InProgress" : "Done";
-                await axios.put(`/api/v1/todo/update/${todo.id}`, {
-                    content: todo.content,
+                await axios.patch(`/api/v1/todos/${todo.id}/status`, {
                     status: newStatus,
                 });
                 this.getTasks();
@@ -114,9 +112,8 @@ export default {
         },
         async saveEdit(todo) {
             try {
-                await axios.put(`/api/v1/todo/update/${todo.id}`, {
+                await axios.patch(`/api/v1/todos/${todo.id}/content`, {
                     content: todo.content,
-                    status: todo.status,
                 });
                 todo.isEditing = false;
                 this.getTasks();
