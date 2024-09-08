@@ -2,7 +2,7 @@
     <b-card>
         <b-card-title class="text-center mb-4">To Do App</b-card-title>
         <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
-            <b-form-input class="w-50 me-2" v-model="newTask" placeholder="Enter a task Here"/>
+            <b-form-input class="w-50 me-2" v-model="newTask" @keyup.enter="saveTask" placeholder="Enter a task Here"/>
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
             <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
         </b-card-body>
