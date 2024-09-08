@@ -13,6 +13,8 @@
                         <b-th>No.</b-th>
                         <b-th>Todo item</b-th>
                         <b-th>Status</b-th>
+                        <b-th>Created At</b-th>
+                        <b-th>Updated At</b-th>
                         <b-th>Actions</b-th>
                     </b-tr>
                 </b-thead>
@@ -32,6 +34,8 @@
                             </div>
                         </b-td>
                         <b-td>{{ todo.status }}</b-td>
+                        <b-td>{{ formatDate(todo.createdAt) }}</b-td>
+                        <b-td>{{ formatDate(todo.updatedAt) }}</b-td>
                         <b-td>
                             <b-button class="me-2" variant="danger" @click="deleteTask(todo.id)">DELETE</b-button>
                             <b-button 
@@ -83,6 +87,8 @@ export default {
                 ...todo,
                 index: index + 1,
                 isEditing: false,
+                createdAt: todo.createdDateTime,
+                updatedAt: todo.updatedDateTime,
                 }));
             } catch (error) {
                 console.error("Error fetching tasks:", error);
@@ -120,6 +126,9 @@ export default {
             } catch (error) {
                 console.error("Error saving task:", error);
             }
+        },
+        formatDate(date) {
+            return new Date(date).toLocaleString();
         }
     },
     mounted() {
