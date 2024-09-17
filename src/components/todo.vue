@@ -10,15 +10,19 @@
             v-model="selectedText"
             placeholder=" Enter a task here"
           />
-          <!-- <b-button class="bg-primary-subtle">hello</b-button> -->
-          <!-- <b-button variant="danger">Button</b-button> -->
-          <!-- <b-button variant="success">Button</b-button> -->
-          <!-- <b-button variant="outline-primary">Button</b-button> -->
           <div class="button-group">
-            <b-button class="button-save" variant="primary" @click="addTask"
+            <b-button
+              class="button-save"
+              variant="primary"
+              @click="store.saveTask"
               >SAVE</b-button
             >
-            <b-button class="button-get" variant="warning">GET TASKS</b-button>
+            <b-button
+              class="button-get"
+              variant="warning"
+              @click="store.getTasks"
+              >GET TASKS</b-button
+            >
           </div>
         </div>
         <table>
@@ -51,23 +55,21 @@
               <td>{{ todo.status }}</td>
               <td>
                 <button
-                  @click="deleteFunction(todo)"
+                  @click="store.deleteTask(todo)"
                   type="button"
                   class="btn btn-danger"
                 >
                   DELETE
                 </button>
-              </td>
-              <td>
+
                 <button
-                  @click="editFunction(todo)"
+                  @click="editTask(todo)"
                   type="button"
                   class="btn btn-info"
                 >
                   EDIT
                 </button>
-              </td>
-              <td>
+
                 <button
                   @click="toggleStatus(todo)"
                   type="button"
@@ -91,75 +93,40 @@
 </template>
 
 <script>
+import { useTodoStore } from "../stores/store";
+
 export default {
   name: "todo",
+  //
   data() {
     return {
-      selectedText: "",
-      todos: [
-        {
-          no: 1,
-          content: "Buy groceries for next week",
-          status: "In progress",
-          isEditing: false,
-        },
-        {
-          no: 2,
-          content: "Renew car insurance",
-          status: "In progress",
-          isEditing: false,
-        },
-        {
-          no: 3,
-          content: "Sign up for online course",
-          status: "In progress",
-          isEditing: false,
-        },
-      ],
+      store: useTodoStore(),
     };
   },
+  computed: {
+    todos() {
+      return this.store.todos;
+    },
+  },
   methods: {
-    addTask() {
-      if (this.selectedText.trim() === "") {
-        alert("내용을 입력하세욧!!!");
-        return;
-      }
-
-      const newTodo = {
-        no: this.todos.length + 1,
-        content: this.selectedText,
-        status: "In progress",
-        isEditing: false,
-      };
-
-      this.todos.push(newTodo);
-      this.selectedText = "";
+    saveTask() {
+      return this.store.saveTask();
     },
-    editFunction(todo) {
-      // 수정
-      this.todos.forEach((item) => {
-        item.isEditing = false;
-      });
-      todo.isEditing = true;
+    getTasks() {
+      return this.store.getTasks();
     },
-    saveEdit(todo) {
-      todo.isEditing = false;
+    updateTask(id, content) {
+      return this.store.updateTask(id, content);
     },
-    deleteFunction(todo) {
-      // indexOf로 todos 배열에서 해당 todo 가져오기
-      const index = this.todos.indexOf(todo);
-
-      if (confirm("정말로 삭제하시겠습니까?")) {
-        if (index > -1) {
-          // todos에서 해당 항목을 배열에서 제거
-          this.todos.splice(index, 1);
-        }
-      }
+    toggleTaskStatus(todo) {
+      return this.store.toggleTaskStatus(todo);
     },
-    toggleStatus(todo) {
-      // 상태가 In progress이면 Finshed 버튼 아니면 In progress 버튼
-      todo.status = todo.status === "In progress" ? "Done" : "In progress";
+    deleteTask(id) {
+      return this.store.deleteTask(id);
     },
+  },
+  mounted() {
+    this.getTasks();
   },
 };
 </script>
