@@ -17,31 +17,27 @@
                 </b-tr>
             </b-thead>
             <b-tbody>
-                <b-tr v-for="(task, index) in tasks" :key="task.no">
+                <b-tr v-for="(task, index) in tasks" :key="task.id">
                     <b-th>{{ index + 1 }}</b-th>
                     <b-td colspan="2" class="text-align">
-                        <template v-if="!task.editStatus">
-                            {{ task.todoItem }}
-                        </template>
                         <template v-if="task.editStatus">
                             <input v-model="task.editText" placeholder="Enter a todoItem here" class="input-task">
+                        </template>
+                        <template v-else>
+                            {{ task.content }}
                         </template>
                     </b-td>
                     <b-td>{{ task.status }}</b-td>
                     <b-td>
                         <div class="d-flex gap-2">
-                            <b-button @click="deleted(task.no)" class="fw-bold text-center fs-6"
+                            <b-button @click="deleteTask(task.id)" class="fw-bold text-center fs-6"
                                 variant="danger">DELETE</b-button>
-                            <b-button @click="edited(task.no)" class="fw-bold text-center fs-6"
-                                variant="primary">EDIT</b-button>
-                            <template v-if="task.status === 'In Progress'">
-                                <b-button @click="finished(task.no)" class="fw-bold text-center fs-6"
-                                    variant="success">FINISH</b-button>
+                            <b-button @click="editTask(task.id)" class="fw-bold text-center fs-6" variant="primary">EDIT</b-button>
+                            <template v-if="task.status === 'InProgress'">
+                                <b-button @click="finishTask(task.id)" class="fw-bold text-center fs-6" variant="success">FINISH</b-button>
                             </template>
                             <template v-if="task.status === 'Done'">
-                                <b-button @click="inProgress(task.no)" class="fw-bold text-center fs-6"
-                                    variant="warning">In Progress
-                                </b-button>
+                                <b-button @click="setInProgress(task.id)" class="fw-bold text-center fs-6" variant="warning">In Progress</b-button>
                             </template>
                         </div>
                     </b-td>
@@ -52,24 +48,22 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+const props = defineProps(['tasks']);
+const emit = defineEmits(['task-deleted', 'task-edited', 'task-finished', 'task-in-progress']);
 
-const props = defineProps(['tasks'])
-const emit = defineEmits(['task-deleted', 'task-edited', 'task-finished', 'task-in-progress'])
+const deleteTask = (taskId) => {
+    emit('task-deleted', taskId);
+};
 
-const deleted = (taskId) => {
-    emit('task-deleted', taskId)
-}
+const editTask = (taskId) => {
+    emit('task-edited', taskId);
+};
 
-const edited = (taskId) => {
-    emit('task-edited', taskId)
-}
+const finishTask = (taskId) => {
+    emit('task-finished', taskId);
+};
 
-const finished = (taskId) => {
-    emit('task-finished', taskId)
-}
-
-const inProgress = (taskId) => {
-    emit('task-in-progress', taskId)
-}
+const setInProgress = (taskId) => {
+    emit('task-in-progress', taskId);
+};
 </script>
