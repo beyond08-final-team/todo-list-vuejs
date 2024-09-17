@@ -7,7 +7,7 @@
         <todo-input-form />
       </b-card-body>
 
-      <b-card-body class="todo-list overflow-y-scroll">
+      <b-card-body class="todo-list">
         <todo-list :todos="todos" />
       </b-card-body>
     </b-card>
@@ -109,5 +109,8 @@ export default {
 <style lang="scss" scoped>
 .todo-card {
   height: 500px;
+}
+.todo-list {
+  max-height: 320px;
 }
 </style>

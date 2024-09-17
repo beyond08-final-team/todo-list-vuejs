@@ -1,56 +1,116 @@
+import { apiClient } from "@apis/client.js";
 import { defineStore } from "pinia";
 
 export const useTodoStore = defineStore("todo", {
   state: () => {
     return {
-      todos: [
-        {
-          no: 1,
-          content: "hello",
-          status: "In Progress",
-        },
-        {
-          no: 2,
-          content: "hello",
-          status: "Done",
-        },
-        {
-          no: 3,
-          content: "hello",
-          status: "In Progress",
-        },
-      ],
+      todos: [],
     };
   },
   actions: {
-    addTodo(content) {
+    async addTodo(content) {
       if (content === "") return;
 
-      const lastTodo = this.todos[this.todos.length - 1];
-
       const newTodo = {
-        no: lastTodo.no + 1,
         content,
-        status: "In Progress",
       };
 
-      this.todos.push(newTodo);
+      try {
+        const response = await apiClient.post("/todo", newTodo);
+        this.todos.push(response.data.data);
+      } catch (err) {
+        console.log(err);
+      }
     },
-    editTodo(newTodo) {
-      const targetTodo = this.todos.find((todo) => todo.no === newTodo.no);
-      targetTodo.content = newTodo.content;
+    async fetchTodo() {
+      try {
+        const response = await apiClient.get("/todos");
+        this.todos = response.data.data;
+      } catch (err) {
+        console.log(err);
+      }
     },
-    deleteTodo(no) {
-      const targetIndex = this.todos.findIndex((todo) => todo.no === no);
-      this.todos.splice(targetIndex, 1);
+    async editTodo(newTodo) {
+      try {
+        const response = await apiClient.patch(`/todo/${newTodo.id}/content`, {
+          content: newTodo.content,
+        });
+
+        const result = response.data.data;
+
+        // 방법 1
+        // map을 활용해 변경이 된 객체만 서버의 response로 교체
+        this.todos = this.todos.map((todo) =>
+          todo.id === result.id ? { ...result } : todo
+        );
+
+        // 방법 2
+        // 변경이 된 객체를 직접 참조해 status 변경
+        const targetTodo = this.todos.find((todo) => todo.id === result.id);
+        targetTodo.content = result.content;
+      } catch (err) {
+        console.log(err);
+      }
     },
-    setFinished(no) {
-      const targetTodo = this.todos.find((todo) => todo.no === no);
-      targetTodo.status = "Done";
+    async editTodoRefetch(newTodo) {
+      try {
+        const response = await apiClient.patch(`/todo/${newTodo.id}/content`, {
+          content: newTodo.content,
+        });
+        this.fetchTodo();
+      } catch (err) {
+        console.log(err);
+      }
     },
-    setInProgress(no) {
-      const targetTodo = this.todos.find((todo) => todo.no === no);
-      targetTodo.status = "In Progress";
+    async deleteTodo(no) {
+      try {
+        await apiClient.delete(`/todo/${no}`);
+
+        const targetIndex = this.todos.findIndex((todo) => todo.id === no);
+
+        this.todos.splice(targetIndex, 1);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async setFinished(no) {
+      try {
+        const response = await apiClient.patch(`/todo/${no}/status`, {
+          status: "Done",
+        });
+        const result = response.data.data;
+
+        // 방법1
+        this.todos = this.todos.map((todo) =>
+          todo.id === result.id ? { ...result } : todo
+        );
+
+        // 방법2
+        // 변경이 된 객체를 직접 참조해 status 변경
+        const target = this.todos.find((todo) => result.id === todo.id);
+        target.status = result.status;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async setInProgress(no) {
+      try {
+        const response = await apiClient.patch(`/todo/${no}/status`, {
+          status: "InProgress",
+        });
+        const result = response.data.data;
+
+        // 방법 1
+        this.todos = this.todos.map((todo) =>
+          todo.id === result.id ? { ...result } : todo
+        );
+
+        // 방법 2
+        const targetTodo = this.todos.find((todo) => todo.id === result.id);
+        targetTodo.status = result.status;
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 });

@@ -23,13 +23,15 @@ export default {
   setup() {
     const todoStore = useTodoStore();
 
-    return { todos: todoStore.todos };
+    return { todoStore };
+  },
+  computed: {
+    todos() {
+      return this.todoStore.todos;
+    },
   },
   components: {
     PiniaTodoListItem,
-  },
-  data() {
-    return {};
   },
 };
 </script>

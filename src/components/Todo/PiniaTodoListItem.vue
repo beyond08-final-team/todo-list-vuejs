@@ -1,10 +1,10 @@
 <template>
-  <b-td>{{ todo.no }}</b-td>
+  <b-td>{{ todo.id }}</b-td>
   <b-td v-if="isEdit" class="p-1">
     <b-form-input
       :value="content"
       @input="onChangeContent"
-      @keypress.enter="handleEdit(todo.no)"
+      @keypress.enter="handleEdit(todo.id)"
     />
   </b-td>
   <b-td v-else>
@@ -12,34 +12,34 @@
   </b-td>
   <b-td>{{ todo.status }}</b-td>
   <b-td class="d-none d-sm-block">
-    <b-button class="me-3" variant="danger" @click="handleDelete(todo.no)"
+    <b-button class="me-3" variant="danger" @click="handleDelete(todo.id)"
       >DELETE</b-button
     >
     <b-button class="me-3" variant="dark" @click="onClickEdit(todo.content)">
       EDIT
     </b-button>
     <b-button
-      v-if="todo.status === 'In Progress'"
+      v-if="todo.status === 'InProgress'"
       variant="success"
-      @click="handleFinished(todo.no)"
+      @click="handleFinished(todo.id)"
     >
       FINISHED
     </b-button>
-    <b-button v-else variant="success" @click="handleInProgress(todo.no)">
+    <b-button v-else variant="success" @click="handleInProgress(todo.id)">
       In Progress
     </b-button>
   </b-td>
   <b-td class="d-sm-none">
     <b-dropdown variant="outline-secondary">
-      <b-dropdown-item @click="handleDelete(todo.no)"> DELETE </b-dropdown-item>
+      <b-dropdown-item @click="handleDelete(todo.id)"> DELETE </b-dropdown-item>
       <b-dropdown-divider />
       <b-dropdown-item
-        v-if="todo.status === 'In Progress'"
-        @click="handleFinished(todo.no)"
+        v-if="todo.status === 'InProgress'"
+        @click="handleFinished(todo.id)"
       >
         FINISHED
       </b-dropdown-item>
-      <b-dropdown-item v-else @click="handleInProgress(todo.no)">
+      <b-dropdown-item v-else @click="handleInProgress(todo.id)">
         FINISHED
       </b-dropdown-item>
       <b-dropdown-divider />
@@ -58,11 +58,12 @@ export default {
     const todoStore = useTodoStore();
 
     return {
-      addTodo: todoStore.addTOdo,
+      addTodo: todoStore.addTodo,
       editTodo: todoStore.editTodo,
       deleteTodo: todoStore.deleteTodo,
       setFinished: todoStore.setFinished,
       setInProgress: todoStore.setInProgress,
+      editTodoRefetch: todoStore.editTodoRefetch,
     };
   },
   props: {
@@ -83,7 +84,8 @@ export default {
     },
     handleEdit(no) {
       if (this.content !== "") {
-        this.editTodo({ no, content: this.content });
+        // this.editTodo({ id: no, content: this.content });
+        this.editTodoRefetch({ id: no, content: this.content });
       }
       this.isEdit = false;
     },

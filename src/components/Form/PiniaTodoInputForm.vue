@@ -2,7 +2,7 @@
   <div class="todo-input-group w-75 d-flex justify-content-around m-auto">
     <b-form-input class="w-50" :value="todo" @input="onChangeTodo" />
     <b-button variant="primary" @click="handleAddTodo">SAVE</b-button>
-    <b-button variant="warning">GET TODOS</b-button>
+    <b-button variant="warning" @click="onClickFetch">GET TODOS</b-button>
   </div>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   setup() {
     const todoStore = useTodoStore();
 
-    return { todoStore };
+    return { todoStore, fetchTodo: todoStore.fetchTodo };
   },
   data() {
     return {
@@ -27,6 +27,9 @@ export default {
     handleAddTodo() {
       this.todoStore.addTodo(this.todo);
       this.todo = "";
+    },
+    onClickFetch() {
+      this.fetchTodo();
     },
   },
 };
