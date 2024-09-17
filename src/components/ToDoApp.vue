@@ -2,7 +2,7 @@
     <b-card>
         <b-card-title class="text-center mb-4">To Do App</b-card-title>
         <b-card-body class="d-flex w-75 justify-content-around m-auto mb-4">
-            <b-form-input class="w-50 me-2" v-model="newTask" @keyup.enter="saveTask" placeholder="Enter a task Here"/>
+            <b-form-input class="w-50 me-2" v-model="todoStore.newTask" @keyup.enter="saveTask" placeholder="Enter a task Here"/>
             <b-button variant="primary" @click="saveTask">SAVE</b-button>
             <b-button variant="warning" @click="getTasks">GET TASKS</b-button>
         </b-card-body>
@@ -56,76 +56,37 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { useTodoStore } from '../stores/todoStore';
 
 export default {
     data() {
         return {
-            newTask: '',
-            todos: [],
+            todoStore: useTodoStore(),
         };
     },
+    computed: {
+        todos() {
+            return this.todoStore.todos;
+        },
+    },
     methods: {
-        async saveTask() {
-            if (this.newTask.trim()) {
-                try {
-                await axios.post("/api/v1/todos", {
-                    content: this.newTask,
-                    status: "InProgress",
-                });
-                this.newTask = "";
-                this.getTasks();
-                } catch (error) {
-                    console.error("Error saving task:", error);
-                }
-            }
+        saveTask() {
+            return this.todoStore.saveTask();
         },
-        async getTasks() {
-            try {
-                const response = await axios.get("/api/v1/todos");
-                this.todos = response.data.map((todo, index) => ({
-                ...todo,
-                index: index + 1,
-                isEditing: false,
-                createdAt: todo.createdDateTime,
-                updatedAt: todo.updatedDateTime,
-                }));
-            } catch (error) {
-                console.error("Error fetching tasks:", error);
-            }
+        getTasks() {
+            return this.todoStore.getTasks();
         },
-        async deleteTask(id) {
-            try {
-                await axios.delete(`/api/v1/todos/${id}`);
-                this.getTasks();
-            } catch (error) {
-                console.error("Error deleting task:", error);
-            }
+        deleteTask(id) {
+            return this.todoStore.deleteTask(id);
         },
-        async toggleStatus(todo) {
-            try {
-                const newStatus = todo.status === "Done" ? "InProgress" : "Done";
-                await axios.patch(`/api/v1/todos/${todo.id}/status`, {
-                    status: newStatus,
-                });
-                this.getTasks();
-            } catch (error) {
-                console.error("Error toggling task status:", error);
-            }
+        toggleStatus(id) {
+            return this.todoStore.toggleStatus(id);
         },
-        editTask(todo) {
-            todo.isEditing = true;
+        editTask(id) {
+            return this.todoStore.editTask(id);
         },
-        async saveEdit(todo) {
-            try {
-                await axios.patch(`/api/v1/todos/${todo.id}/content`, {
-                    content: todo.content,
-                });
-                todo.isEditing = false;
-                this.getTasks();
-            } catch (error) {
-                console.error("Error saving task:", error);
-            }
+        saveEdit(id) {
+            return this.todoStore.saveEdit(id);
         },
         formatDate(date) {
             return new Date(date).toLocaleString();
