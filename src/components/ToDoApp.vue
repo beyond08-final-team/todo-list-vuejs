@@ -59,11 +59,18 @@
 import { useTodoStore } from '../stores/todoStore';
 
 export default {
-    data() {
+    setup() {
+        const todoStore = useTodoStore();
+
         return {
-            todoStore: useTodoStore(),
+            todoStore,
         };
     },
+    // data() {
+    //     return {
+    //         todoStore: useTodoStore(),
+    //     };
+    // },
     computed: {
         todos() {
             return this.todoStore.todos;
